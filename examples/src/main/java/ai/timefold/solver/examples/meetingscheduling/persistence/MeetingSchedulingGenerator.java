@@ -35,6 +35,7 @@ public class MeetingSchedulingGenerator extends LoggingMain {
         generator.writeMeetingSchedule(800, 5);
     }
 
+
     private final StringDataGenerator topicGenerator = new StringDataGenerator()
             .addPart(true, 0,
                     "Strategize",
@@ -145,7 +146,7 @@ public class MeetingSchedulingGenerator extends LoggingMain {
             17 * 60 + 45, // 17:45
     };
 
-    private final StringDataGenerator fullNameGenerator = StringDataGenerator.buildFullNames();
+    private final PersonNameGenerator personNameGenerator = new PersonNameGenerator();
 
     protected final SolutionFileIO<MeetingSchedule> solutionFileIO;
     protected final File outputDir;
@@ -171,7 +172,7 @@ public class MeetingSchedulingGenerator extends LoggingMain {
     }
 
     public MeetingSchedule createMeetingSchedule(String fileName, int meetingListSize, int timeGrainListSize,
-            int roomListSize) {
+                                                 int roomListSize) {
         random = new Random(37);
         MeetingSchedule meetingSchedule = new MeetingSchedule(0L);
         MeetingConstraintConfiguration constraintConfiguration = new MeetingConstraintConfiguration(0L);
@@ -222,7 +223,7 @@ public class MeetingSchedulingGenerator extends LoggingMain {
             meeting.setPreferredAttendanceList(preferredAttendanceList);
 
             logger.trace("Created meeting with topic ({}), durationInGrains ({}), requiredAttendanceListSize ({}), " +
-                    "preferredAttendanceListSize ({}).", topic, durationInGrains, requiredAttendanceListSize,
+                            "preferredAttendanceListSize ({}).", topic, durationInGrains, requiredAttendanceListSize,
                     preferredAttendanceListSize);
             meetingList.add(meeting);
         }
@@ -275,9 +276,9 @@ public class MeetingSchedulingGenerator extends LoggingMain {
         int personListSize = attendanceListSize * meetingSchedule.getRoomList().size() * 3
                 / (4 * meetingSchedule.getMeetingList().size());
         List<Person> personList = new ArrayList<>(personListSize);
-        fullNameGenerator.predictMaximumSizeAndReset(personListSize);
+        // Remove the fullNameGenerator call and use the personNameGenerator instead:
         for (int i = 0; i < personListSize; i++) {
-            String fullName = fullNameGenerator.generateNextValue();
+            String fullName = personNameGenerator.generateFullName();
             Person person = new Person(i, fullName);
             logger.trace("Created person with fullName ({}).", fullName);
             personList.add(person);

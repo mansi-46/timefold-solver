@@ -65,7 +65,7 @@ public class ConferenceConstraintConfiguration extends AbstractPersistable {
     @ConstraintWeight(TALK_PREREQUISITE_TALKS)
     private HardMediumSoftScore talkPrerequisiteTalks = HardMediumSoftScore.ofHard(10);
     @ConstraintWeight(TALK_MUTUALLY_EXCLUSIVE_TALKS_TAGS)
-    private HardMediumSoftScore talkMutuallyExclusiveTalksTags = HardMediumSoftScore.ofHard(1);
+    private HardMediumSoftScore MutuallyExclusiveTalkTags = HardMediumSoftScore.ofHard(1);
     @ConstraintWeight(CONSECUTIVE_TALKS_PAUSE)
     private HardMediumSoftScore consecutiveTalksPause = HardMediumSoftScore.ofHard(1);
     @ConstraintWeight(CROWD_CONTROL)
@@ -194,13 +194,13 @@ public class ConferenceConstraintConfiguration extends AbstractPersistable {
         this.talkPrerequisiteTalks = talkPrerequisiteTalks;
     }
 
-    public HardMediumSoftScore getTalkMutuallyExclusiveTalksTags() {
-        return talkMutuallyExclusiveTalksTags;
-    }
-
-    public void setTalkMutuallyExclusiveTalksTags(HardMediumSoftScore talkMutuallyExclusiveTalksTags) {
-        this.talkMutuallyExclusiveTalksTags = talkMutuallyExclusiveTalksTags;
-    }
+//    public HardMediumSoftScore getTalkMutuallyExclusiveTalksTags() {
+//        return talkMutuallyExclusiveTalksTags;
+//    }
+//
+//    public void setTalkMutuallyExclusiveTalksTags(HardMediumSoftScore talkMutuallyExclusiveTalksTags) {
+//        this.talkMutuallyExclusiveTalksTags = talkMutuallyExclusiveTalksTags;
+//    }
 
     public HardMediumSoftScore getConsecutiveTalksPause() {
         return consecutiveTalksPause;
@@ -456,5 +456,13 @@ public class ConferenceConstraintConfiguration extends AbstractPersistable {
 
     public void setSpeakerMakespan(HardMediumSoftScore speakerMakespan) {
         this.speakerMakespan = speakerMakespan;
+    }
+
+    public HardMediumSoftScore getMutuallyExclusiveTalkTags() {
+        return this.MutuallyExclusiveTalkTags;
+    }
+
+    public void setMutuallyExclusiveTalkTags(HardMediumSoftScore MutuallyExclusiveTalkTags) {
+        this.MutuallyExclusiveTalkTags = MutuallyExclusiveTalkTags;
     }
 }

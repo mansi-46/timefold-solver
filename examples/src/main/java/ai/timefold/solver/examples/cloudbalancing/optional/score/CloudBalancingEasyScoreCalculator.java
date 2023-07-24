@@ -8,19 +8,19 @@ import ai.timefold.solver.examples.cloudbalancing.domain.CloudProcess;
 
 public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<CloudBalance, HardSoftScore> {
 
-    /**
-     * A very simple implementation. The double loop can easily be removed by using Maps as shown in
-     * {@link CloudBalancingMapBasedEasyScoreCalculator#calculateScore(CloudBalance)}.
-     */
     @Override
     public HardSoftScore calculateScore(CloudBalance cloudBalance) {
+        int hardScore = calculateHardScore(cloudBalance);
+        int softScore = calculateSoftScore(cloudBalance);
+        return HardSoftScore.of(hardScore, softScore);
+    }
+
+    private int calculateHardScore(CloudBalance cloudBalance) {
         int hardScore = 0;
-        int softScore = 0;
         for (CloudComputer computer : cloudBalance.getComputerList()) {
             int cpuPowerUsage = 0;
             int memoryUsage = 0;
             int networkBandwidthUsage = 0;
-            boolean used = false;
 
             // Calculate usage
             for (CloudProcess process : cloudBalance.getProcessList()) {
@@ -28,7 +28,6 @@ public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<Cl
                     cpuPowerUsage += process.getRequiredCpuPower();
                     memoryUsage += process.getRequiredMemory();
                     networkBandwidthUsage += process.getRequiredNetworkBandwidth();
-                    used = true;
                 }
             }
 
@@ -45,13 +44,25 @@ public class CloudBalancingEasyScoreCalculator implements EasyScoreCalculator<Cl
             if (networkBandwidthAvailable < 0) {
                 hardScore += networkBandwidthAvailable;
             }
+        }
+        return hardScore;
+    }
 
+    private int calculateSoftScore(CloudBalance cloudBalance) {
+        int softScore = 0;
+        for (CloudComputer computer : cloudBalance.getComputerList()) {
+            boolean used = false;
+            for (CloudProcess process : cloudBalance.getProcessList()) {
+                if (computer.equals(process.getComputer())) {
+                    used = true;
+                    break;
+                }
+            }
             // Soft constraints
             if (used) {
                 softScore -= computer.getCost();
             }
         }
-        return HardSoftScore.of(hardScore, softScore);
+        return softScore;
     }
-
 }

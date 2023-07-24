@@ -260,7 +260,7 @@ public class ConferenceSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<C
             constraintConfiguration.setTalkPrerequisiteTalks(readScoreConstraintLine(TALK_PREREQUISITE_TALKS,
                     TALK_PREREQUISITE_TALKS_DESCRIPTION));
             constraintConfiguration
-                    .setTalkMutuallyExclusiveTalksTags(readScoreConstraintLine(TALK_MUTUALLY_EXCLUSIVE_TALKS_TAGS,
+                    .setMutuallyExclusiveTalkTags(readScoreConstraintLine(TALK_MUTUALLY_EXCLUSIVE_TALKS_TAGS,
                             TALK_MUTUALLY_EXCLUSIVE_TALKS_TAGS_DESCRIPTION));
             constraintConfiguration.setConsecutiveTalksPause(readScoreConstraintLine(CONSECUTIVE_TALKS_PAUSE,
                     CONSECUTIVE_TALKS_PAUSE_DESCRIPTION));
@@ -902,7 +902,7 @@ public class ConferenceSchedulingXlsxFileIO extends AbstractXlsxSolutionFileIO<C
             writeScoreConstraintLine(TALK_PREREQUISITE_TALKS, constraintConfiguration.getTalkPrerequisiteTalks(),
                     TALK_PREREQUISITE_TALKS_DESCRIPTION);
             writeScoreConstraintLine(TALK_MUTUALLY_EXCLUSIVE_TALKS_TAGS,
-                    constraintConfiguration.getTalkMutuallyExclusiveTalksTags(),
+                    constraintConfiguration.getMutuallyExclusiveTalkTags(),
                     TALK_MUTUALLY_EXCLUSIVE_TALKS_TAGS_DESCRIPTION);
             writeScoreConstraintLine(CONSECUTIVE_TALKS_PAUSE, constraintConfiguration.getConsecutiveTalksPause(),
                     CONSECUTIVE_TALKS_PAUSE_DESCRIPTION);

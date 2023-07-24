@@ -79,7 +79,8 @@
     <dependency>
       <groupId>jakarta.inject</groupId>
       <artifactId>jakarta.inject-api</artifactId>
-      <scope>test</scope>
+        <version>2.0.1.MR</version>
+        <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>

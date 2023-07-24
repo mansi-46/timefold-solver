@@ -11,6 +11,8 @@ public class Speaker extends AbstractPersistable {
 
     private Set<Timeslot> unavailableTimeslotSet;
 
+    private SpeakerTags tags;
+
     private Set<String> requiredTimeslotTagSet;
     private Set<String> preferredTimeslotTagSet;
     private Set<String> prohibitedTimeslotTagSet;
@@ -21,10 +23,16 @@ public class Speaker extends AbstractPersistable {
     private Set<String> undesiredRoomTagSet;
 
     public Speaker() {
+        tags = new SpeakerTags();
     }
 
     public Speaker(long id) {
         super(id);
+        tags = new SpeakerTags();
+    }
+
+    public SpeakerTags getTags() {
+        return tags; // Add this method to get the SpeakerTags object
     }
 
     @Override
