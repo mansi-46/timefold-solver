@@ -138,13 +138,32 @@ public class TaskAssigningPanel extends SolutionPanel<TaskAssigningSolution> {
             return;
         }
         final int baseDurationBudgetPerEmployee = (producedTime - previousProducedTime);
-        final int newTaskCount = getSolution().getEmployeeList().size() * baseDurationBudgetPerEmployee / BASE_DURATION_AVERAGE;
+        final int newTaskCount = calculateNewTaskCount(baseDurationBudgetPerEmployee);
         if (newTaskCount <= 0) {
             // Do not change previousProducedDuration
             return;
         }
         logger.debug("Scheduling production of {} new tasks.", newTaskCount);
         previousProducedTime = producedTime;
+        scheduleProduction(newTaskCount);
+    }
+
+    /**
+     * Calculate the number of new tasks to be produced based on the given base duration budget per employee.
+     *
+     * @param baseDurationBudgetPerEmployee The base duration budget per employee for which new tasks are to be produced.
+     * @return The number of new tasks to be produced.
+     */
+    private int calculateNewTaskCount(int baseDurationBudgetPerEmployee) {
+        return getSolution().getEmployeeList().size() * baseDurationBudgetPerEmployee / BASE_DURATION_AVERAGE;
+    }
+
+    /**
+     * Schedule the production of new tasks and update the problem with the created tasks.
+     *
+     * @param newTaskCount The number of new tasks to be produced.
+     */
+    private void scheduleProduction(int newTaskCount) {
         final int readyTime = previousConsumedTime;
         doProblemChange((taskAssigningSolution, problemChangeDirector) -> {
             List<TaskType> taskTypeList = taskAssigningSolution.getTaskTypeList();
@@ -152,26 +171,63 @@ public class TaskAssigningPanel extends SolutionPanel<TaskAssigningSolution> {
             Priority[] priorities = Priority.values();
             List<Task> taskList = taskAssigningSolution.getTaskList();
             for (int i = 0; i < newTaskCount; i++) {
-                TaskType taskType = taskTypeList.get(producingRandom.nextInt(taskTypeList.size()));
-                long nextTaskId = 0L;
-                int nextIndexInTaskType = 0;
-                for (Task other : taskList) {
-                    if (nextTaskId <= other.getId()) {
-                        nextTaskId = other.getId() + 1L;
-                    }
-                    if (taskType == other.getTaskType()) {
-                        if (nextIndexInTaskType <= other.getIndexInTaskType()) {
-                            nextIndexInTaskType = other.getIndexInTaskType() + 1;
-                        }
-                    }
-                }
-                // Prevent the new task from being assigned retroactively
-                Task task = new Task(nextTaskId, taskType, nextIndexInTaskType,
-                        customerList.get(producingRandom.nextInt(customerList.size())), readyTime,
-                        priorities[producingRandom.nextInt(priorities.length)]);
+                Task task = createNewTask(taskTypeList, customerList, priorities, readyTime);
                 problemChangeDirector.addEntity(task, taskList::add);
             }
         });
+    }
+
+    /**
+     * Create a new task with random attributes.
+     *
+     * @param taskTypeList The list of available task types.
+     * @param customerList The list of available customers.
+     * @param priorities   The array of task priorities.
+     * @param readyTime    The ready time for the new task.
+     * @return The newly created task.
+     */
+    private Task createNewTask(List<TaskType> taskTypeList, List<Customer> customerList,
+                               Priority[] priorities, int readyTime) {
+        TaskType taskType = taskTypeList.get(producingRandom.nextInt(taskTypeList.size()));
+        long nextTaskId = findNextTaskId();
+        int nextIndexInTaskType = findNextIndexInTaskType(taskType);
+        Customer customer = customerList.get(producingRandom.nextInt(customerList.size()));
+        Priority priority = priorities[producingRandom.nextInt(priorities.length)];
+        return new Task(nextTaskId, taskType, nextIndexInTaskType, customer, readyTime, priority);
+    }
+
+
+    /**
+     * Find the next available task ID based on the existing tasks in the solution.
+     *
+     * @return The next available task ID.
+     */
+    private long findNextTaskId() {
+        long nextTaskId = 0L;
+        for (Task other : getSolution().getTaskList()) {
+            if (nextTaskId <= other.getId()) {
+                nextTaskId = other.getId() + 1L;
+            }
+        }
+        return nextTaskId;
+    }
+
+    /**
+     * Find the next available index in the task type based on the existing tasks in the solution.
+     *
+     * @param taskType The task type for which the next available index is to be found.
+     * @return The next available index in the task type.
+     */
+    private int findNextIndexInTaskType(TaskType taskType) {
+        int nextIndexInTaskType = 0;
+        for (Task other : getSolution().getTaskList()) {
+            if (taskType == other.getTaskType()) {
+                if (nextIndexInTaskType <= other.getIndexInTaskType()) {
+                    nextIndexInTaskType = other.getIndexInTaskType() + 1;
+                }
+            }
+        }
+        return nextIndexInTaskType;
     }
 
     @Override
